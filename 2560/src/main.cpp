@@ -1,45 +1,32 @@
-// testcolors demo for Adafruit RGBmatrixPanel library.
-// Renders 512 colors on our 16x32 RGB LED matrix:
-// http://www.adafruit.com/products/420
-// Library supports 4096 colors, but there aren't that many pixels!  :)
-
-// Written by Limor Fried/Ladyada & Phil Burgess/PaintYourDragon
-// for Adafruit Industries.
-// BSD license, all text above must be included in any redistribution.
-
 #include <RGBmatrixPanel.h>
 
-// Most of the signal pins are configurable, but the CLK pin has some
-// special constraints.  On 8-bit AVR boards it must be on PORTB...
-// Pin 8 works on the Arduino Uno & compatibles (e.g. Adafruit Metro),
-// Pin 11 works on the Arduino Mega.  On 32-bit SAMD boards it must be
-// on the same PORT as the RGB data pins (D2-D7)...
-// Pin 8 works on the Adafruit Metro M0 or Arduino Zero,
-// Pin A4 works on the Adafruit Metro M4 (if using the Adafruit RGB
-// Matrix Shield, cut trace between CLK pads and run a wire to A4).
-
-//#define CLK  8   // USE THIS ON ARDUINO UNO, ADAFRUIT METRO M0, etc.
-//#define CLK A4 // USE THIS ON METRO M4 (not M0)
+// 定义引脚
 #define CLK 11 // USE THIS ON ARDUINO MEGA
-#define OE   9
-#define LAT 10
-#define A   A0
-#define B   A1
-#define C   A2
+#define OE   9   // 输出使能引脚
+#define LAT 10   // 锁存引脚
+#define A   A0   // 地址选择A
+#define B   A1   // 地址选择B
+#define C   A2   // 地址选择C
 
+// 初始化16x16显示面板
+// 最后一个参数true表示这是16x16的面板（而不是32x16）
 RGBmatrixPanel matrix(A, B, C, CLK, LAT, OE, false);
 
 void setup() {
+  // 初始化矩阵
   matrix.begin();
   
-  // Fill entire 16x16 matrix with red color
-  for(uint8_t x=0; x<16; x++) {    // 16x16的屏幕
-    for(uint8_t y=0; y<16; y++) {
-      matrix.drawPixel(x, y, matrix.Color333(7, 0, 0)); // 最大红色(7)，无绿色(0)，无蓝色(0)
-    }
-  }
+  // 清除屏幕
+  matrix.fillScreen(0);  // 先清空屏幕
+  
+  // 画出边框 - 使用绿色
+  matrix.drawLine(0, 0, -15, 0, matrix.Color333(0, 7, 0));   // 上边
+  matrix.drawLine(-15, 0, -15, -15, matrix.Color333(0, 7, 0)); // 右边
+  matrix.drawLine(-15, -15, 0, -15, matrix.Color333(0, 7, 0)); // 下边
+  matrix.drawLine(0, -15, 0, 0, matrix.Color333(0, 7, 0));   // 左边
 }
 
 void loop() {
-  // Do nothing -- image doesn't change
+
+
 }
