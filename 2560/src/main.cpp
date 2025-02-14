@@ -1,32 +1,58 @@
+// colorwheel demo for Adafruit RGBmatrixPanel library.
+// Renders a nice circle of hues on our 32x32 RGB LED matrix:
+// http://www.adafruit.com/products/607
+// 32x32 MATRICES DO NOT WORK WITH ARDUINO UNO or METRO 328.
+
+// Written by Limor Fried/Ladyada & Phil Burgess/PaintYourDragon
+// for Adafruit Industries.
+// BSD license, all text above must be included in any redistribution.
+
 #include <RGBmatrixPanel.h>
 
-// 定义引脚
-#define CLK 11 // USE THIS ON ARDUINO MEGA
-#define OE   9   // 输出使能引脚
-#define LAT 10   // 锁存引脚
-#define A   A0   // 地址选择A
-#define B   A1   // 地址选择B
-#define C   A2   // 地址选择C
+// Most of the signal pins are configurable, but the CLK pin has some
+// special constraints.  On 8-bit AVR boards it must be on PORTB...
+// Pin 11 works on the Arduino Mega.  On 32-bit SAMD boards it must be
+// on the same PORT as the RGB data pins (D2-D7)...
+// Pin 8 works on the Adafruit Metro M0 or Arduino Zero,
+// Pin A4 works on the Adafruit Metro M4 (if using the Adafruit RGB
+// Matrix Shield, cut trace between CLK pads and run a wire to A4).
 
-// 初始化16x16显示面板
-// 最后一个参数true表示这是16x16的面板（而不是32x16）
-RGBmatrixPanel matrix(A, B, C, CLK, LAT, OE, false);
+//#define CLK  8   // USE THIS ON ADAFRUIT METRO M0, etc.
+//#define CLK A4 // USE THIS ON METRO M4 (not M0)
+#define CLK 11 // USE THIS ON ARDUINO MEGA
+#define OE   9
+#define LAT 10
+#define A   A0
+#define B   A1
+#define C   A2
+#define D   A3
+
+RGBmatrixPanel matrix(A, B, C, D, CLK, LAT, OE, false);
+
+// 定义一个缓冲区来存储显示内容
+static const uint16_t RED_COLOR = matrix.Color333(7, 0, 0);
+
+// 时间控制变量
+const unsigned long REFRESH_INTERVAL = 3000; // 微秒，约333Hz刷新率
+unsigned long lastRefreshTime = 0;
 
 void setup() {
-  // 初始化矩阵
   matrix.begin();
   
-  // 清除屏幕
-  matrix.fillScreen(0);  // 先清空屏幕
-  
-  // 画出边框 - 使用绿色
-  matrix.drawLine(0, 0, -15, 0, matrix.Color333(0, 7, 0));   // 上边
-  matrix.drawLine(-15, 0, -15, -15, matrix.Color333(0, 7, 0)); // 右边
-  matrix.drawLine(-15, -15, 0, -15, matrix.Color333(0, 7, 0)); // 下边
-  matrix.drawLine(0, -15, 0, 0, matrix.Color333(0, 7, 0));   // 左边
+  // 填充整个屏幕为红色
+  for(int y = 0; y < matrix.width(); y++) {
+    for(int x = 0; x < matrix.height(); x++) {
+      matrix.drawPixel(x, y, RED_COLOR);
+    }
+  }
 }
 
 void loop() {
-
-
+  unsigned long currentTime = micros();
+  
+  // 检查是否需要刷新显示
+  if(currentTime - lastRefreshTime >= REFRESH_INTERVAL) {
+    matrix.updateDisplay();
+    lastRefreshTime = currentTime;
+  }
 }
