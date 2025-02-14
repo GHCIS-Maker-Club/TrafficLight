@@ -54,7 +54,7 @@ void loop()
 //Clear screen
 void screen_clear()
 {
-  matrix.fillRect(0, 0, matrix.width(), matrix.height(), matrix.Color333(0, 0, 0));
+  matrix.fillScreen(0);  // 直接用fillScreen(0)清空屏幕
 }
 
 /*  @name :  display_Image
@@ -77,6 +77,7 @@ void display_Image(int16_t x, int16_t y, const uint16_t bitmap[], int16_t w, int
 void Demo_1()
 {
   screen_clear();
+  delay(2000);
   display_Image(0, 0, gImage_image, 64, 64);
   delay(2000);
 }
