@@ -1,14 +1,13 @@
-// colorwheel demo for Adafruit RGBmatrixPanel library.
-// Renders a nice circle of hues on our 32x32 RGB LED matrix:
-// http://www.adafruit.com/products/607
-// 32x32 MATRICES DO NOT WORK WITH ARDUINO UNO or METRO 328.
+// testshapes demo for RGBmatrixPanel library.
+// Demonstrates the drawing abilities of the RGBmatrixPanel library.
+// For 64x64 RGB LED matrix.
 
-// Written by Limor Fried/Ladyada & Phil Burgess/PaintYourDragon
-// for Adafruit Industries.
-// BSD license, all text above must be included in any redistribution.
+// WILL NOT FIT on ARDUINO UNO -- requires a Mega, M0 or M4 board
 
-#include <RGBmatrixPanel.h>
-
+#include "RGBmatrixPanel.h"
+#include "bit_bmp.h"
+#include <string.h>
+#include <stdlib.h>
 // Most of the signal pins are configurable, but the CLK pin has some
 // special constraints.  On 8-bit AVR boards it must be on PORTB...
 // Pin 11 works on the Arduino Mega.  On 32-bit SAMD boards it must be
@@ -20,39 +19,65 @@
 //#define CLK  8   // USE THIS ON ADAFRUIT METRO M0, etc.
 //#define CLK A4 // USE THIS ON METRO M4 (not M0)
 #define CLK 11 // USE THIS ON ARDUINO MEGA
+
 #define OE   9
 #define LAT 10
 #define A   A0
 #define B   A1
 #define C   A2
 #define D   A3
+#define E   A4
 
-RGBmatrixPanel matrix(A, B, C, D, CLK, LAT, OE, false);
+RGBmatrixPanel matrix(A, B, C, D, E, CLK, LAT, OE, false, 64);
+//Configure the serial port to use the standard printf function
 
-// 定义一个缓冲区来存储显示内容
-static const uint16_t RED_COLOR = matrix.Color333(7, 0, 0);
+// Function declarations
+void screen_clear();
+void display_Image(int16_t x, int16_t y, const uint16_t bitmap[], int16_t w, int16_t h);
+void Demo_1();
 
-// 时间控制变量
-const unsigned long REFRESH_INTERVAL = 3000; // 微秒，约333Hz刷新率
-unsigned long lastRefreshTime = 0;
-
-void setup() {
+void setup()
+{
+  Serial.begin(115200);
   matrix.begin();
-  
-  // 填充整个屏幕为红色
-  for(int y = 0; y < matrix.width(); y++) {
-    for(int x = 0; x < matrix.height(); x++) {
-      matrix.drawPixel(x, y, RED_COLOR);
-    }
-  }
+  delay(500);
 }
 
-void loop() {
-  unsigned long currentTime = micros();
-  
-  // 检查是否需要刷新显示
-  if(currentTime - lastRefreshTime >= REFRESH_INTERVAL) {
-    matrix.updateDisplay();
-    lastRefreshTime = currentTime;
-  }
+void loop()
+{
+  // Do nothing -- image doesn't change
+
+ Demo_1();
+
 }
+
+//Clear screen
+void screen_clear()
+{
+  matrix.fillRect(0, 0, matrix.width(), matrix.height(), matrix.Color333(0, 0, 0));
+}
+
+/*  @name :  display_Image
+ *  @brief:  display an image
+ *           The image data is in the "bit_bmp.h"
+ *           You can use some tools to get the image data
+ *           You can set the data bits which is 8 or 16 and set the MSB first which is true or false on line 1001 of Adafruit_GFX.c
+ *  @param:    x   Top left corner x coordinate
+ *             y   Top left corner y coordinate
+ *         bitmap  byte array with 16-bit color bitmap,the image data is in the "bit_bmp.h"
+ *             w   Width of bitmap in pixels
+ *             h   Height of bitmap in pixels
+ *  @retval: None
+ */
+void display_Image(int16_t x, int16_t y, const uint16_t bitmap[], int16_t w, int16_t h)
+{
+  matrix.display_image(x, y, bitmap, w, h);
+}
+
+void Demo_1()
+{
+  screen_clear();
+  display_Image(0, 0, gImage_image, 64, 64);
+  delay(2000);
+}
+
