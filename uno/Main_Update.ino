@@ -110,8 +110,8 @@ void setup() {
   Serial.println("System initialized - Non-blocking sound version");
 }
 
-long long last_press_time;
-int cur_animation_signal;
+long long last_press_time = -20000;
+int cur_animation_signal = 4;
 int cur_light_signal;
 const int max_signal = 11;
 
@@ -129,10 +129,11 @@ void send_signal(int cur_signal){
 void loop() {
     int cur_period;
     int time_period_normal = millis() % 20000;
-    if(time_period_normal < 10)cur_period = 0; //Red light
-    else if(time_period_normal < 18) cur_period = 2; //Green light
+    if(time_period_normal < 10000)cur_period = 0; //Red light
+    else if(time_period_normal < 18000) cur_period = 2; //Green light
     else cur_period = 3; //Yellow
 
+  Serial.println(cur_animation_signal);
   unsigned long currentMillis = millis();
   
   // 检查冷却状态
@@ -175,6 +176,10 @@ void loop() {
       currentTone = 0;
       currentStep = 0;
       isSoundActive = false;
+
+      cur_animation_signal = (cur_animation_signal == max_signal ? cur_animation_signal = 4 : cur_animation_signal + 1);
+      send_signal(cur_animation_signal);
+      last_press_time = millis();
     }
   }
 
