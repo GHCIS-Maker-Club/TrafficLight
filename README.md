@@ -60,6 +60,14 @@ TrafficLight/
 └── examples/
 ```
 
+## License
+MIT License - feel free to use and modify for your own projects.
+
+## Contributors
+<a href="https://github.com/GHCIS-Maker-Club/TrafficLight/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=GHCIS-Maker-Club/TrafficLight" />
+</a>
+
 ---
 
 ## Chinese
@@ -120,10 +128,7 @@ TrafficLight/
 MIT License - feel free to use and modify for your own projects.
 
 ## Contributors
-- Your Name
-- Your Team Members
+<a href="https://github.com/GHCIS-Maker-Club/TrafficLight/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=GHCIS-Maker-Club/TrafficLight" />
+</a>
 
----
-*This project was created for the Club Exhibition, exploring the theme of freedom through interactive digital art.*
-
-*本项目为社团展览创作，通过互动数字艺术探索自由主题。*
