@@ -85,7 +85,7 @@ void updateSound() {
           if (elapsed >= 147) {
             currentStep++;
             isSoundActive = false;
-            if (currentStep >= 30) {
+            if (currentStep >= 20) {//here to change the length of the WOODPECKER
               currentStep = 0;
               currentSound = IDLE;
               inCooldown = true;
