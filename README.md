@@ -4,7 +4,7 @@
 
 [English](#english) | [中文](#chinese)
 
-![License](https://img.shields.io/github/license/yourusername/TrafficLight)
+![License](https://img.shields.io/github/license/GHCIS-Maker-Club/TrafficLight)
 
 ## English
 
