@@ -124,11 +124,16 @@ void loop() {
   
   // 处理按钮按下
   if (buttonState == 1) {
-    if (!inCooldown && currentSound == IDLE) {
+    if (!inCooldown && (currentSound == IDLE || currentSound == WOODPECKER)) {  // 只在IDLE或WOODPECKER状态响应
       Serial.println("Starting sound sequence");
       currentSound = CHIRP;
       currentTone = 0;
+      currentStep = 0;
       isSoundActive = false;
+    } else if (inCooldown) {
+      Serial.println("Cooldown active - Please wait");
+    } else if (currentSound == CHIRP) {
+      Serial.println("CHIRP in progress - ignoring button");
     }
   }
   
