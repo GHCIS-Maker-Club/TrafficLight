@@ -1,13 +1,14 @@
-int spkPin = 12; // 扬声器连接到数字引脚 8
+int spkPin = A0; // 扬声器连接到模拟引脚 A0
 int buttonPin = 11; // 按钮连接到数字引脚 11
 int Idletime = 10;
+int volume = 128;  // 音量控制 (0-255)
 int tones[] = {
   3465, 2850, 2333, 1956, 1638, 1380, 1161, 992, 814, 704, 500
 }; 
 
 // 状态变量
 unsigned long lastPlayTime = 0;     // 上次播放时间
-unsigned long cooldownTime = 100;   // 冷却时间（毫秒）
+unsigned long cooldownTime = 1000;   // 冷却时间（毫秒）
 bool inCooldown = false;           // 是否在冷却状态
 
 // 声音播放状态
@@ -21,6 +22,11 @@ enum SoundType {
   WOODPECKER
 } currentSound = IDLE;
 
+void playTone(int freq, int duration) {
+  tone(spkPin, freq, duration);
+  analogWrite(spkPin, volume);  // 设置音量
+}
+
 void updateSound() {
   unsigned long currentMillis = millis();
   
@@ -31,16 +37,16 @@ void updateSound() {
     
     switch(currentSound) {
       case IDLE:
-        tone(spkPin, 973, 25);
+        playTone(973, 25);
         break;
       case CHIRP:
         if (currentTone < 11) {
-          tone(spkPin, tones[currentTone], 11);
+          playTone(tones[currentTone], 11);
         }
         break;
       case WOODPECKER:
         if (currentStep < 30) {
-          tone(spkPin, 500, 30);
+          playTone(500, 30);
         }
         break;
     }
@@ -66,7 +72,9 @@ void updateSound() {
           if (currentTone >= 11) {
             currentTone = 0;
             currentSound = WOODPECKER;
-            Serial.println("CHIRP completed, switching to WOODPECKER");
+            inCooldown = true;
+            lastPlayTime = currentMillis;
+            Serial.println("CHIRP completed, switching to WOODPECKER with cooldown");
           }
         }
         break;
@@ -123,17 +131,19 @@ void loop() {
   }
   
   // 处理按钮按下
-  if (buttonState == 1) {
-    if (!inCooldown && (currentSound == IDLE || currentSound == WOODPECKER)) {  // 只在IDLE或WOODPECKER状态响应
-      Serial.println("Starting sound sequence");
+  if (buttonState == 1) {  // 按钮被按下
+    if (currentSound == IDLE && !inCooldown) {  // 只在IDLE状态且不在冷却时响应按钮
+      Serial.println("Starting CHIRP sequence");
       currentSound = CHIRP;
       currentTone = 0;
       currentStep = 0;
       isSoundActive = false;
-    } else if (inCooldown) {
-      Serial.println("Cooldown active - Please wait");
-    } else if (currentSound == CHIRP) {
-      Serial.println("CHIRP in progress - ignoring button");
+    } else if (currentSound == WOODPECKER && !inCooldown) {  // WOODPECKER状态且不在冷却时也可以响应
+      Serial.println("Interrupting WOODPECKER, starting CHIRP sequence");
+      currentSound = CHIRP;
+      currentTone = 0;
+      currentStep = 0;
+      isSoundActive = false;
     }
   }
   
