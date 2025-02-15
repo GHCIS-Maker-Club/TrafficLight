@@ -34,6 +34,9 @@ This art installation explores the concept of freedom through the familiar yet t
   - Custom animation support
   - Emoji library integration
 
+### Reference Projects
+- [traffic-crossing](https://github.com/ronnied/traffic-crossing) - An Arduino-based pedestrian traffic crossing lights project with sound effects, providing inspiration for traffic light timing and interaction patterns.
+
 ### Installation
 1. Clone this repository
 2. Install required dependencies
@@ -46,6 +49,7 @@ This art installation explores the concept of freedom through the familiar yet t
 - FastLED Library
 - Adafruit GFX Library
 - WiFi Library
+- [ESP32-HUB75-MatrixPanel-I2S-DMA](https://github.com/mrfaptastic/ESP32-HUB75-MatrixPanel-I2S-DMA) - For driving the LED matrix display
 
 ### Directory Structure
 ```
