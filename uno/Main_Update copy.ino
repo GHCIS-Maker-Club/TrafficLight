@@ -10,7 +10,6 @@
 #define CMD_YELLOW 2
 #define CMD_RED 3
 #define CMD_CLEAR 4
-#define CMD_BLINK 5
 
 // Timing constants
 #define GREEN_TIME 10000    // 10 seconds
@@ -27,17 +26,25 @@ unsigned long lastBlinkTime = 0;
 void setup() {
   Wire.begin(); // Initialize I2C as master
   Serial.begin(9600);
-  Serial.println("I2C Master Initialized");
+  delay(1000);
+  Serial.println("\n=== Traffic Light Controller Started ===");
 }
 
 void sendCommand(byte address, byte command) {
   Wire.beginTransmission(address);
   Wire.write(command);
-  Wire.endTransmission();
+  byte error = Wire.endTransmission();
+  
   Serial.print("Sent command ");
   Serial.print(command);
-  Serial.print(" to address ");
-  Serial.println(address);
+  Serial.print(" to address 0x");
+  Serial.print(address, HEX);
+  if (error == 0) {
+    Serial.println(" - OK");
+  } else {
+    Serial.print(" - Error ");
+    Serial.println(error);
+  }
 }
 
 void loop() {
@@ -48,6 +55,10 @@ void loop() {
     sequenceStartTime = currentTime;
     isBlinking = false;
     blinkCount = 0;
+    
+    Serial.print("\n=== Step Changed to ");
+    Serial.print(currentStep);
+    Serial.println(" ===");
   }
 
   switch (currentStep) {
