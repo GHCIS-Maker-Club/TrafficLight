@@ -109,33 +109,32 @@ void setup() {
   pinMode(buttonPin, INPUT);
   Serial.println("System initialized - Non-blocking sound version");
 }
-
+'''
 long long last_press_time = -20000;
 int cur_animation_signal = 4;
 int cur_light_signal;
 const int max_signal = 11;
 
-void send_signal(int cur_signal){
-    int bit_1 = cur_signal & 8;
-    int bit_2 = cur_signal & 4;
-    int bit_3 = cur_signal & 2;
-    int bit_4 = cur_signal & 1;
+
+void send_signal_all(int cur_signal){
+    int bit_1 = cur_signal & 2;
+    int bit_2 = cur_signal & 1;
     digitalWrite(PIN_1, bit_1);
     digitalWrite(PIN_2, bit_2);
-    digitalWrite(PIN_3, bit_3);
-    digitalWrite(PIN_4, bit_4);
 }
+'''
 
 void loop() {
+  '''
     int cur_period;
     int time_period_normal = millis() % 20000;
     if(time_period_normal < 10000)cur_period = 0; //Red light
-    else if(time_period_normal < 18000) cur_period = 2; //Green light
-    else cur_period = 3; //Yellow
+    else if(time_period_normal < 18000) cur_period = 1; //Green light
+    else cur_period = 2; //Yellow
 
   Serial.println(cur_animation_signal);
   unsigned long currentMillis = millis();
-  
+  '''
   // 检查冷却状态
   if (inCooldown && (currentMillis - lastPlayTime >= cooldownTime)) {
     inCooldown = false;
@@ -166,8 +165,9 @@ void loop() {
       currentStep = 0;
       isSoundActive = false;
 
-      cur_animation_signal = (cur_animation_signal == max_signal ? cur_animation_signal = 4 : cur_animation_signal + 1);
-      send_signal(cur_animation_signal);
+      send_signal_all(1);
+      delay(50);
+      send_signal_all(2);
       last_press_time = millis();
       
     } else if (currentSound == WOODPECKER && !inCooldown) {  // WOODPECKER状态且不在冷却时也可以响应
@@ -176,19 +176,53 @@ void loop() {
       currentTone = 0;
       currentStep = 0;
       isSoundActive = false;
-
-      cur_animation_signal = (cur_animation_signal == max_signal ? cur_animation_signal = 4 : cur_animation_signal + 1);
-      send_signal(cur_animation_signal);
+'''
+      send_signal_all(1);
+      delay(50);
+      send_signal_all(2);
       last_press_time = millis();
+      '''
     }
   }
 
   else {
+    '''
     if(millis() - last_press_time > 20000){
-        send_signal(cur_period);
+        switch (cur_period)
+        {
+        case 0: //RED
+          send_signal_all(0);
+          break;
+        case 1: //GREEN
+          send_signal_all(3);
+          break;
+        case 2: //YELLOW
+          send_signal_all(4);
+
+          break;
+        }
     }
+    '''
   }
   
   // 更新声音状态
   updateSound();
 }
+
+
+
+'''
+1.green light 
+2.yellow light
+3.red light
+4.---clean screen
+5.a1
+6.a2
+7.a3
+8.a4
+9.a5
+10.a6
+11.a7
+12.a8
+
+'''
