@@ -1,0 +1,131 @@
+//---PIN DEFINITION---
+
+#define R1 25
+#define G1 26
+#define BL1 27
+#define R2 14
+#define G2 12
+#define BL2 13
+#define CH_A 23
+#define CH_B 19
+#define CH_C 5
+#define CH_D 17
+#define CH_E 18 // assign to any available pin if using two panels or 64x64 panels with 1/32 scan
+#define CLK 16
+#define LAT 4
+#define OE 15
+
+
+#define STATES_PIN_1 34
+#define STATES_PIN_2 35
+#define STATES_PIN_3 32
+//Other configuration
+
+#include "ESP32-HUB75-MatrixPanel-I2S-DMA.h"
+#include <FastLED.h>
+#include "Image.h"
+// Configure for your panel(s) as appropriate!
+#define PANEL_WIDTH 64
+#define PANEL_HEIGHT 64  	
+#define PANELS_NUMBER 1 	// Number of chained panels
+#define PIN_E 18
+
+#define PANE_WIDTH PANEL_WIDTH * PANELS_NUMBER
+#define PANE_HEIGHT PANEL_HEIGHT
+
+const int IMAGE_WIDTH = 64; // The width of your image
+const int IMAGE_HEIGHT = 64; // The height of your image
+// placeholder for the matrix object
+MatrixPanel_I2S_DMA *dma_display = nullptr;
+uint16_t time_counter = 0, cycles = 0, fps = 0;
+unsigned long fps_timer;
+uint8_t brightness = 55;
+
+
+
+void setup() {
+    pinMode(STATES_PIN_1, INPUT_PULLDOWN);
+    pinMode(STATES_PIN_2, INPUT_PULLDOWN);
+    pinMode(STATES_PIN_3, INPUT_PULLDOWN);
+
+    //Initialize the Matrix LED
+
+    Serial.begin(115200);
+    
+    Serial.println(F("*****************************************************"));
+    Serial.println(F("*        ESP32 PICTURE DISPLAY        *"));
+    Serial.println(F("*****************************************************"));
+    
+    /*
+        Two 64x64 panels chained, so we the setup is customized like this
+    */
+    HUB75_I2S_CFG mxconfig;
+    mxconfig.mx_height = PANEL_HEIGHT;     
+    mxconfig.chain_length = PANELS_NUMBER; 
+    mxconfig.gpio.e = PIN_E;                
+    mxconfig.driver = HUB75_I2S_CFG::FM6124;     
+
+    dma_display = new MatrixPanel_I2S_DMA(mxconfig);
+    dma_display->setBrightness8(brightness);   
+    if( not dma_display->begin() )
+        Serial.println("****** !KABOOM! I2S memory allocation failed ***********");
+    
+    Serial.println("Fill screen: RED");
+    //dma_display->fillScreenRGB888(255, 0, 0);
+    delay(100);
+    Serial.println("Starting image display...");
+    fps_timer = millis();
+
+    dma_display -> setBrightness8(128);
+
+}
+
+int cur_gif;
+const int max_gif = 10;
+
+int new_state(){
+    int bit_1 = digitalRead(STATES_PIN_1);
+    int bit_2 = digitalRead(STATES_PIN_2);
+    int bit_3 = digitalRead(STATES_PIN_3);
+    return (2 << bit_3) + (1 << bit_2) + (bit_1);
+}
+int scrollPosition = 0;  // Starting position for scrolling
+const int scrollSpeed = 0;  // Number of rows to scroll per frame
+unsigned long displayTime = 100; // Time to display each image in milliseconds
+unsigned long lastImageChangeTime = 0; // Last time the image was changed
+int currentImageIndex = 0;
+
+void displayimage(int image_no, int array_index){
+    const unsigned long* currentImage = epd_bitmap_allArray[array_index][image_no];
+    int IMAGE_WIDTH_CURRENT = IMAGE_WIDTH; 
+    int IMAGE_HEIGHT_CURRENT = IMAGE_HEIGHT;
+    for (int x = 0; x < PANE_WIDTH; x++) {
+        for (int y = 0; y < PANE_HEIGHT; y++) {
+            int imgX = (scrollPosition + y) % IMAGE_WIDTH_CURRENT;
+            int imgY = IMAGE_HEIGHT_CURRENT - 1 - x;
+            int index = imgY * IMAGE_WIDTH_CURRENT + imgX;
+            uint32_t colorData = pgm_read_dword(&(currentImage[index]));
+            uint8_t red = (colorData >> 16) & 0xFF;
+            uint8_t green = (colorData >> 8) & 0xFF;
+            uint8_t blue = colorData & 0xFF;
+            dma_display->drawPixelRGB888(x, y, red, green, blue);
+        }
+    }
+}
+
+int cur_state = 0;
+int cur_frame = 0;
+void loop() {
+    Serial.println(cur_state);
+    bool change_flag = false;
+    int to_state = new_state();
+    if(to_state != cur_state)change_flag = true;
+    if(!change_flag){
+        displayimage(cur_frame, cur_state);
+        cur_frame ++; 
+        if(cur_frame >= frames[cur_state])cur_frame = 0;
+    }
+    else {
+        cur_state = to_state; cur_frame = 0;
+    }
+}
