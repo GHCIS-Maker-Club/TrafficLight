@@ -15,10 +15,24 @@
 #define LAT 4
 #define OE 15
 
-
-#define STATES_PIN_1 34
-#define STATES_PIN_2 35
+#define STATES_PIN_1 19
+#define STATES_PIN_2 21
 #define STATES_PIN_3 32
+#define STATES_PIN_4 33
+#define DISPLAY_RED 0
+#define DISPLAY_YELLOW 1
+#define DISPLAY_GREEN 2
+#define CLEAR_ALL 3
+#define ANIMATION_1 4
+#define ANIMATION_2 5
+#define ANIMATION_3 6
+#define ANIMATION_4 7
+#define ANIMATION_5 8
+#define ANIMATION_6 9
+#define ANIMATION_7 10
+#define ANIMATINO_8 11
+#define ANIMATION_9 12
+#define THIS_COLOR 0 //RED
 //Other configuration
 
 #include "ESP32-HUB75-MatrixPanel-I2S-DMA.h"
@@ -47,6 +61,7 @@ void setup() {
     pinMode(STATES_PIN_1, INPUT_PULLDOWN);
     pinMode(STATES_PIN_2, INPUT_PULLDOWN);
     pinMode(STATES_PIN_3, INPUT_PULLDOWN);
+    pinMode(STATES_PIN_4, INPUT_PULLDOWN);
 
     //Initialize the Matrix LED
 
@@ -87,7 +102,8 @@ int new_state(){
     int bit_1 = digitalRead(STATES_PIN_1);
     int bit_2 = digitalRead(STATES_PIN_2);
     int bit_3 = digitalRead(STATES_PIN_3);
-    return (2 << bit_3) + (1 << bit_2) + (bit_1);
+    int bit_4 = digitalRead(STATES_PIN_4);
+    return (bit_4 << 3) + (bit_3 << 2) + (bit_2 << 1) + (bit_1);
 }
 int scrollPosition = 0;  // Starting position for scrolling
 const int scrollSpeed = 0;  // Number of rows to scroll per frame
@@ -112,18 +128,51 @@ void displayimage(int image_no, int array_index){
         }
     }
 }
-
+void displaycolor_red(){
+    if(THIS_COLOR == DISPLAY_RED) dma_display -> fillCircle(32, 32, 32, 0xF800);
+}
+void displaycolor_yellow(){
+    if(THIS_COLOR == DISPLAY_YELLOW) dma_display -> fillCircle(32, 32, 32, 0xFFE0);
+}
+void displaycolor_green(){
+    if(THIS_COLOR != DISPLAY_GREEN)dma_display -> fillCircle(32, 32, 32, 0x0400);
+}
 int cur_state = 0;
 int cur_frame = 0;
 void loop() {
-    Serial.println(cur_state);
+    Serial.println(cur_frame);
     bool change_flag = false;
     int to_state = new_state();
-    if(to_state != cur_state)change_flag = true;
+    //Debug
+    //int to_state = Serial.parseInt();
+    //int to_state = 11;
+
+    if(to_state != cur_state){
+        dma_display->clearScreen();
+        change_flag = true;
+    }
     if(!change_flag){
-        displayimage(cur_frame, cur_state);
-        cur_frame ++; 
-        if(cur_frame >= frames[cur_state])cur_frame = 0;
+        if(cur_state > CLEAR_ALL){
+            displayimage(cur_frame, cur_state - CLEAR_ALL - 1);
+            cur_frame ++; 
+            if(cur_frame >= frames[cur_state - CLEAR_ALL - 1])cur_frame = 0;
+            delay(34);
+        }
+        else{
+            switch (cur_state) {
+                case DISPLAY_RED:
+                    displaycolor_red();
+                    break;
+                case DISPLAY_YELLOW:
+                    displaycolor_yellow();
+                    break;
+                case DISPLAY_GREEN:
+                    displaycolor_green();
+                case CLEAR_ALL:
+                    dma_display->clearScreen();
+            }
+            cur_frame = 0;
+        }
     }
     else {
         cur_state = to_state; cur_frame = 0;
