@@ -20,7 +20,7 @@ int tones[] = {
 
 // 状态变量
 unsigned long lastPlayTime = 0;     // 上次播放时间
-unsigned long cooldownTime = 3000;   // 冷却时间（毫秒）
+unsigned long cooldownTime = 1000;   // 冷却时间（毫秒）
 bool inCooldown = false;           // 是否在冷却状态
 
 // 声音播放状态
