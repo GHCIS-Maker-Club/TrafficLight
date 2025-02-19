@@ -23,33 +23,75 @@ This art installation explores the concept of freedom through the familiar yet t
 
 ### Technical Details
 - **Hardware Components:**
-  - ESP32 microcontroller
-  - Arduino integration
+  - Main Controller: Arduino Mega 2560
+  - Display Controllers: Multiple ESP32 modules
   - LED Matrix Display (16x16)
   - Custom-designed enclosure
+  - Sound module integration
   
 - **Software Features:**
   - Real-time mode switching
-  - Wireless communication
+  - Multi-controller synchronization
+  - Wireless communication between components
   - Custom animation support
   - Emoji library integration
+  - Sound effects support
 
 ### Reference Projects
 - [traffic-crossing](https://github.com/ronnied/traffic-crossing) - An Arduino-based pedestrian traffic crossing lights project with sound effects, providing inspiration for traffic light timing and interaction patterns.
 
-### Installation
-1. Clone this repository
-2. Install required dependencies
-3. Upload the code to your ESP32
-4. Connect the LED matrix display
-5. Power up and enjoy!
+### Project Structure
+```
+TrafficLight/
+├── Main_Update/              # Main Arduino controller code
+│   └── Main_Update.ino      # Central control logic
+├── ESP_Update/              # ESP32 display controller code
+│   ├── ESP1/               # First display controller
+│   ├── ESP2/               # Second display controller
+│   └── ESP3/               # Third display controller
+├── oldversions/            # Previous iterations of the project
+└── docs/                   # Documentation
+```
+
+### Component Overview
+1. **Main Controller (Arduino UNO)**
+   - Manages overall system state
+   - Coordinates display transitions
+   - Handles sound effects
+   - Controls timing and synchronization
+
+2. **ESP32 Display Controllers**
+   - Each ESP32 controls a separate LED matrix
+   - Wireless communication with main controller
+   - Supports multiple display modes
+   - Real-time animation rendering
+
+### Setup Instructions
+1. **Main Controller Setup**
+   - Upload `Main_Update/Main_Update.ino` to Arduino UNO
+   - Connect sound module and other peripherals
+   - Verify serial communication
+
+2. **ESP32 Display Controllers Setup**
+   - For each ESP32:
+     1. Open corresponding folder in ESP_Update
+     2. Install required libraries
+     3. Configure WiFi settings if needed
+     4. Upload code to respective ESP32
+     5. Connect LED matrix display
+
+3. **System Integration**
+   - Ensure all components are powered appropriately
+   - Verify wireless communication between controllers
+   - Test synchronization and display modes
 
 ### Dependencies
+- Arduino IDE
 - ESP32 Arduino Core
 - FastLED Library
 - Adafruit GFX Library
 - WiFi Library
-- [ESP32-HUB75-MatrixPanel-I2S-DMA](https://github.com/mrfaptastic/ESP32-HUB75-MatrixPanel-I2S-DMA) - For driving the LED matrix display
+- [ESP32-HUB75-MatrixPanel-I2S-DMA](https://github.com/mrfaptastic/ESP32-HUB75-MatrixPanel-I2S-DMA)
 
 ### Directory Structure
 ```
@@ -91,29 +133,75 @@ MIT License - feel free to use and modify for your own projects.
 
 ### 技术细节
 - **硬件组件：**
-  - ESP32 微控制器
-  - Arduino 集成
+  - 主控制器：Arduino Mega 2560
+  - 显示控制器：多个ESP32模块
   - LED点阵显示屏 (16x16)
-  - 定制外壳
+  - 定制外壳设计
+  - 声音模块集成
   
 - **软件特性：**
   - 实时模式切换
-  - 无线通信
+  - 多控制器同步
+  - 组件间无线通信
   - 自定义动画支持
   - 表情符号库集成
+  - 声音效果支持
 
-### 安装说明
-1. 克隆此仓库
-2. 安装所需依赖
-3. 将代码上传至ESP32
-4. 连接LED点阵屏
-5. 通电运行
+### 参考项目
+- [traffic-crossing](https://github.com/ronnied/traffic-crossing) - 一个基于Arduino的人行横道信号灯项目，带有声音效果，为交通信号灯的时序和交互模式提供了灵感。
+
+### 项目结构
+```
+TrafficLight/
+├── Main_Update/              # Arduino主控制器代码
+│   └── Main_Update.ino      # 中央控制逻辑
+├── ESP_Update/              # ESP32显示控制器代码
+│   ├── ESP1/               # 第一显示控制器
+│   ├── ESP2/               # 第二显示控制器
+│   └── ESP3/               # 第三显示控制器
+├── oldversions/            # 项目历史版本
+└── docs/                   # 文档
+```
+
+### 组件概述
+1. **主控制器 (Arduino UNO)**
+   - 管理整体系统状态
+   - 协调显示转换
+   - 处理声音效果
+   - 控制时序和同步
+
+2. **ESP32显示控制器**
+   - 每个ESP32控制一个LED矩阵
+   - 与主控制器进行无线通信
+   - 支持多种显示模式
+   - 实时动画渲染
+
+### 设置说明
+1. **主控制器设置**
+   - 将 `Main_Update/Main_Update.ino` 上传至Arduino UNO
+   - 连接声音模块和其他外设
+   - 验证串口通信
+
+2. **ESP32显示控制器设置**
+   - 对于每个ESP32：
+     1. 打开ESP_Update中对应的文件夹
+     2. 安装所需库文件
+     3. 根据需要配置WiFi设置
+     4. 将代码上传至相应的ESP32
+     5. 连接LED点阵显示屏
+
+3. **系统集成**
+   - 确保所有组件供电正常
+   - 验证控制器间的无线通信
+   - 测试同步和显示模式
 
 ### 依赖项
-- ESP32 Arduino Core
-- FastLED 库
-- Adafruit GFX 库
-- WiFi 库
+- Arduino IDE开发环境
+- ESP32 Arduino核心库
+- FastLED库
+- Adafruit GFX库
+- WiFi库
+- [ESP32-HUB75-MatrixPanel-I2S-DMA](https://github.com/mrfaptastic/ESP32-HUB75-MatrixPanel-I2S-DMA)
 
 ### 目录结构
 ```
