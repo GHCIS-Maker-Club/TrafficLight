@@ -36,7 +36,7 @@ int tones[] = {
 unsigned long lastPlayTime = 0;     // Last sound play time / 上次播放声音的时间
 unsigned long cooldownTime = 1000;  // Cooldown duration in milliseconds / 冷却时间（毫秒）
 bool inCooldown = false;           // Cooldown status flag / 是否在冷却状态
-int button_count = 0;
+
 // Sound Playback Status
 // 声音播放状态
 unsigned long soundStartTime = 0;   // Current tone start time / 当前音调开始时间
@@ -51,6 +51,15 @@ enum SoundType {
   CHIRP,        // Bird chirp sound / 鸟叫声
   WOODPECKER    // Woodpecker sound / 啄木鸟声音
 } currentSound = IDLE;
+
+// Variables for button and animation control
+// 按钮和动画控制变量
+long long last_press_time = 0;        // Last button press time / 最后一次按钮按下时间
+int cur_animation_signal = 0;         // Current animation signal / 当前动画信号
+int cur_light_signal = 0;            // Current traffic light signal / 当前交通灯信号
+const int max_signal = 11;       // Maximum signal value / 最大信号值
+int last_period = -1;            // Last traffic light period / 上一次的交通灯状态
+int button_count = 0;            // Button press counter
 
 // Play a tone with specified frequency and duration
 // 播放指定频率和持续时间的音调
@@ -131,58 +140,6 @@ void updateSound() {
     }
   }
 }
-
-// Initialize system
-// 系统初始化
-void setup() {
-  Serial.begin(9600);  // Initialize serial communication / 初始化串口通信
-  
-  // Initialize LCD
-  lcd.init();
-  lcd.setPWM(lcd.REG_ONLY, 255);
-  lcd.clear();
-  lcd.setCursor(4, 0);
-  lcd.print("DFRobot");
-  lcd.setCursor(1, 1);
-  lcd.print("lcd1602 module");
-  delay(2000);  // Show welcome message for 2 seconds
-  lcd.clear();
-  
-  // Play welcome sound
-  playTone(1956, 100);  // 高音
-  delay(100);
-  playTone(2333, 100);  // 更高音
-  delay(100);
-  playTone(2850, 200);  // 最高音
-  delay(200);
-  noTone(spkPin);
-  
-  // Configure pin modes / 配置引脚模式
-  pinMode(spkPin, OUTPUT);
-  pinMode(buttonPin, INPUT);
-  // Configure signal output pins / 配置信号输出引脚
-  pinMode(PIN_1_1, OUTPUT);
-  pinMode(PIN_1_2, OUTPUT);
-  pinMode(PIN_1_3, OUTPUT);
-  pinMode(PIN_1_4, OUTPUT);
-  pinMode(PIN_2_1, OUTPUT);
-  pinMode(PIN_2_2, OUTPUT);
-  pinMode(PIN_2_3, OUTPUT);
-  pinMode(PIN_2_4, OUTPUT);
-  pinMode(PIN_3_1, OUTPUT);
-  pinMode(PIN_3_2, OUTPUT);
-  pinMode(PIN_3_3, OUTPUT);
-  pinMode(PIN_3_4, OUTPUT);
-}
-
-// Variables for button and animation control
-// 按钮和动画控制变量
-long long last_press_time;        // Last button press time / 最后一次按钮按下时间
-int cur_animation_signal;         // Current animation signal / 当前动画信号
-int cur_light_signal;            // Current traffic light signal / 当前交通灯信号
-const int max_signal = 11;       // Maximum signal value / 最大信号值
-int last_period = -1;            // Last traffic light period / 上一次的交通灯状态
-
 // Send signal to all three groups
 // 向所有三组发送信号
 void send_signal(int cur_signal){
@@ -206,6 +163,94 @@ void send_signal(int cur_signal){
     digitalWrite(PIN_3_3, bit_3);
     digitalWrite(PIN_3_4, bit_4);
 }
+// Initialize system
+// 系统初始化
+void setup() {
+  Serial.begin(9600);  // Initialize serial communication / 初始化串口通信
+       
+  // Initialize LCD
+  lcd.init();
+  lcd.setPWM(lcd.REG_ONLY, 255);
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Traffic Light");
+  lcd.setCursor(0, 1);
+  lcd.print("Maker Club");
+  delay(2000);  // Show welcome message for 2 seconds
+  lcd.clear();
+  
+  // Play welcome sound
+  playTone(1956, 100);  // 高音
+  delay(100);
+  playTone(2333, 100);  // 更高音
+  delay(100);
+  playTone(2850, 200);  // 最高音
+  delay(200);
+  noTone(spkPin);
+  
+  // 快速闪烁序列
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("System Check");
+  lcd.setCursor(0, 1);
+  lcd.print("Testing Lights");
+  
+  // 快速闪烁10次，每种颜色闪烁200ms
+  for(int i = 0; i < 2; i++) {
+    // 红灯
+    send_signal(0);  // 红灯
+    delay(100);
+    send_signal(8);  // 关闭
+
+    
+    // 绿灯
+    send_signal(1);  // 绿灯
+    delay(100);
+    send_signal(8);  // 关闭
+
+    
+    // 黄灯
+    send_signal(2);  // 黄灯
+    delay(100);
+    send_signal(8);  // 关闭
+    delay(50);
+  }
+  lcd.clear();
+  //循环五次
+  for(int i = 0; i < 5; i++){
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Starting");
+    lcd.setCursor(0, 1);
+    lcd.print("please wait");
+    cur_animation_signal = (cur_animation_signal == max_signal ? cur_animation_signal = 4 : cur_animation_signal + 1);
+    send_signal(cur_animation_signal);
+    last_press_time = millis();     
+    delay(1000);
+  //显示准备就绪
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Ready");
+  lcd.setCursor(0, 1);
+  lcd.print("Press Button");
+  }
+  // Configure pin modes / 配置引脚模式
+  pinMode(spkPin, OUTPUT);
+  pinMode(buttonPin, INPUT);
+  // Configure signal output pins / 配置信号输出引脚
+  pinMode(PIN_1_1, OUTPUT);
+  pinMode(PIN_1_2, OUTPUT);
+  pinMode(PIN_1_3, OUTPUT);
+  pinMode(PIN_1_4, OUTPUT);
+  pinMode(PIN_2_1, OUTPUT);
+  pinMode(PIN_2_2, OUTPUT);
+  pinMode(PIN_2_3, OUTPUT);
+  pinMode(PIN_2_4, OUTPUT);
+  pinMode(PIN_3_1, OUTPUT);
+  pinMode(PIN_3_2, OUTPUT);
+  pinMode(PIN_3_3, OUTPUT);
+  pinMode(PIN_3_4, OUTPUT);
+}
 
 // Main program loop
 // 主程序循环
@@ -214,10 +259,17 @@ void loop() {
     int cur_period;
     int time_period_normal = millis() % 20000;
     
-    // Determine traffic light state / 确定交通灯状态
-    if(time_period_normal < 10000)cur_period = 0;           // Red light / 红灯
-    else if(time_period_normal < 18000) cur_period = 2;     // Green light / 绿灯
-    else cur_period = 3;                                    // Yellow light / 黄灯
+    // Determine traffic light state and calculate countdown
+    if(time_period_normal < 10000) {
+        cur_period = 0;           // Red light
+        int countdown = (10000 - time_period_normal) / 1000;  // Convert to seconds
+    } else if(time_period_normal < 18000) {
+        cur_period = 2;     // Green light
+        int countdown = (18000 - time_period_normal) / 1000;  // Convert to seconds
+    } else {
+        cur_period = 3;     // Yellow light
+        int countdown = (20000 - time_period_normal) / 1000;  // Convert to seconds
+    }
 
     unsigned long currentMillis = millis();
     
@@ -290,22 +342,44 @@ void loop() {
         // 20秒后返回正常交通灯显示
         if(millis() - last_press_time > 20000){
             send_signal(cur_period);
-            // Only update LCD if state has changed
-            if(cur_period != last_period) {
-                last_period = cur_period;
-                // Update LCD display based on traffic light state
-                lcd.clear();
-                lcd.setCursor(0, 0);
-                if(cur_period == 0) {
-                    lcd.print("State: " + String("RED"));
-                } else if(cur_period == 2) {
-                    lcd.print("State: " + String("GREEN"));
-                } else {
-                    lcd.print("State: " + String("YELLOW"));
+            
+            // Update LCD display every 500ms
+            static unsigned long last_display_update = 0;
+            if (millis() - last_display_update >= 500) {  // Reduced from 100ms to 500ms
+                last_display_update = millis();
+                
+                // Only clear screen when state changes
+                if (cur_period != last_period) {
+                    lcd.clear();
+                    if(cur_period == 0) {
+                        lcd.setCursor(0, 0);
+                        lcd.print("State: RED");
+                        lcd.setCursor(0, 1);
+                        lcd.print("Time Left: ");
+                    } else if(cur_period == 2) {
+                        lcd.setCursor(0, 0);
+                        lcd.print("State: GREEN");
+                        lcd.setCursor(0, 1);
+                        lcd.print("Time Left: ");
+                    } else {
+                        lcd.setCursor(0, 0);
+                        lcd.print("State: YELLOW");
+                        lcd.setCursor(0, 1);
+                        lcd.print("Time Left: ");
+                    }
                 }
-                // Display button count on second line
-                lcd.setCursor(0, 1);
-                lcd.print("Count: " + String(button_count));
+                
+                // Update only the countdown numbers
+                lcd.setCursor(10, 1);  // Position after "Time Left: "
+                if(cur_period == 0) {
+                    lcd.print(String((10000 - time_period_normal) / 1000) + "s   ");
+                } else if(cur_period == 2) {
+                    lcd.print(String((18000 - time_period_normal) / 1000) + "s   ");
+                } else {
+                    lcd.print(String((20000 - time_period_normal) / 1000) + "s   ");
+                }
+                
+                last_period = cur_period;
             }
         }
         else {
