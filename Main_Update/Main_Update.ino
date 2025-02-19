@@ -36,7 +36,7 @@ int tones[] = {
 unsigned long lastPlayTime = 0;     // Last sound play time / 上次播放声音的时间
 unsigned long cooldownTime = 1000;  // Cooldown duration in milliseconds / 冷却时间（毫秒）
 bool inCooldown = false;           // Cooldown status flag / 是否在冷却状态
-
+int button_count = 0;
 // Sound Playback Status
 // 声音播放状态
 unsigned long soundStartTime = 0;   // Current tone start time / 当前音调开始时间
@@ -139,10 +139,23 @@ void setup() {
   
   // Initialize LCD
   lcd.init();
+  lcd.setPWM(lcd.REG_ONLY, 255);
+  lcd.clear();
   lcd.setCursor(4, 0);
   lcd.print("DFRobot");
   lcd.setCursor(1, 1);
   lcd.print("lcd1602 module");
+  delay(2000);  // Show welcome message for 2 seconds
+  lcd.clear();
+  
+  // Play welcome sound
+  playTone(1956, 100);  // 高音
+  delay(100);
+  playTone(2333, 100);  // 更高音
+  delay(100);
+  playTone(2850, 200);  // 最高音
+  delay(200);
+  noTone(spkPin);
   
   // Configure pin modes / 配置引脚模式
   pinMode(spkPin, OUTPUT);
@@ -168,6 +181,7 @@ long long last_press_time;        // Last button press time / 最后一次按钮
 int cur_animation_signal;         // Current animation signal / 当前动画信号
 int cur_light_signal;            // Current traffic light signal / 当前交通灯信号
 const int max_signal = 11;       // Maximum signal value / 最大信号值
+int last_period = -1;            // Last traffic light period / 上一次的交通灯状态
 
 // Send signal to all three groups
 // 向所有三组发送信号
@@ -237,6 +251,14 @@ void loop() {
             currentStep = 0;                        // Reset step counter / 重置步骤计数器
             isSoundActive = false;                  // Ready for new sound / 准备播放新声音
 
+            button_count++;
+            // Update LCD display
+            lcd.clear();
+            lcd.setCursor(0, 0);
+            lcd.print("Button Pressed");
+            lcd.setCursor(0, 1);
+            lcd.print("Count: " + String(button_count));
+
             // Update and send animation signal / 更新并发送动画信号
             cur_animation_signal = (cur_animation_signal == max_signal ? cur_animation_signal = 4 : cur_animation_signal + 1);
             send_signal(cur_animation_signal);
@@ -248,6 +270,16 @@ void loop() {
             currentTone = 0;                        // Reset tone counter / 重置音调计数器
             currentStep = 0;                        // Reset step counter / 重置步骤计数器
             isSoundActive = false;                  // Ready for new sound / 准备播放新声音
+
+
+            button_count++;
+            // Update LCD display
+            lcd.clear();
+            lcd.setCursor(0, 0);
+            lcd.print("Button Pressed");
+            lcd.setCursor(0, 1);
+            lcd.print("Count: " + String(button_count));
+
             cur_animation_signal = (cur_animation_signal == max_signal ? cur_animation_signal = 4 : cur_animation_signal + 1);
             send_signal(cur_animation_signal);
             last_press_time = millis();            // Record press time / 记录按压时间
@@ -258,8 +290,28 @@ void loop() {
         // 20秒后返回正常交通灯显示
         if(millis() - last_press_time > 20000){
             send_signal(cur_period);
+            // Only update LCD if state has changed
+            if(cur_period != last_period) {
+                last_period = cur_period;
+                // Update LCD display based on traffic light state
+                lcd.clear();
+                lcd.setCursor(0, 0);
+                if(cur_period == 0) {
+                    lcd.print("State: " + String("RED"));
+                } else if(cur_period == 2) {
+                    lcd.print("State: " + String("GREEN"));
+                } else {
+                    lcd.print("State: " + String("YELLOW"));
+                }
+                // Display button count on second line
+                lcd.setCursor(0, 1);
+                lcd.print("Count: " + String(button_count));
+            }
         }
-        else send_signal(cur_animation_signal);
+        else {
+            send_signal(cur_animation_signal);
+            last_period = -1;  // Reset last_period when in animation mode
+        }
     }
     
     // Update sound system / 更新声音系统
