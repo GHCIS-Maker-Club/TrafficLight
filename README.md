@@ -38,7 +38,7 @@ This art installation explores the concept of freedom through the familiar yet t
   - Sound effects support
 
 ### Reference Projects
-- [traffic-crossing](https://github.com/ronnied/traffic-crossing) - An Arduino-based pedestrian traffic crossing lights project with sound effects, providing inspiration for traffic light timing and interaction patterns.
+- [traffic-crossing](https://github.com/ronnied/traffic-crossing) - Sound effects reference
 
 ### Project Structure
 ```
@@ -148,7 +148,7 @@ MIT License - feel free to use and modify for your own projects.
   - 声音效果支持
 
 ### 参考项目
-- [traffic-crossing](https://github.com/ronnied/traffic-crossing) - 一个基于Arduino的人行横道信号灯项目，带有声音效果，为交通信号灯的时序和交互模式提供了灵感。
+- [traffic-crossing](https://github.com/ronnied/traffic-crossing) - 声音效果参考
 
 ### 项目结构
 ```
