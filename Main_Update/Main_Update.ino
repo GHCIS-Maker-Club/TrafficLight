@@ -1,3 +1,5 @@
+#include "DFRobot_RGBLCD1602.h"
+
 // Pin Definitions for Signal Groups
 // 信号组引脚定义
 #define PIN_1_1 6    // First group, bit 1 / 第一组，位1
@@ -12,6 +14,9 @@
 #define PIN_3_2 15   // Third group, bit 2 / 第三组，位2
 #define PIN_3_3 16   // Third group, bit 3 / 第三组，位3
 #define PIN_3_4 17   // Third group, bit 4 / 第三组，位4
+
+// LCD Configuration
+DFRobot_RGBLCD1602 lcd(0x6B, 16, 2);  // 16 characters and 2 lines of show
 
 // Hardware Configuration
 // 硬件配置
@@ -131,6 +136,13 @@ void updateSound() {
 // 系统初始化
 void setup() {
   Serial.begin(9600);  // Initialize serial communication / 初始化串口通信
+  
+  // Initialize LCD
+  lcd.init();
+  lcd.setCursor(4, 0);
+  lcd.print("DFRobot");
+  lcd.setCursor(1, 1);
+  lcd.print("lcd1602 module");
   
   // Configure pin modes / 配置引脚模式
   pinMode(spkPin, OUTPUT);
