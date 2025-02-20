@@ -54,7 +54,7 @@ TrafficLight/
 ```
 
 ### Component Overview
-1. **Main Controller (Arduino UNO)**
+1. **Main Controller (Arduino Mega 2560)**
    - Manages overall system state
    - Coordinates display transitions
    - Handles sound effects
@@ -68,7 +68,7 @@ TrafficLight/
 
 ### Setup Instructions
 1. **Main Controller Setup**
-   - Upload `Main_Update/Main_Update.ino` to Arduino UNO
+   - Upload `Main_Update/Main_Update.ino` to Arduino Mega 2560
    - Connect sound module and other peripherals
    - Verify serial communication
 
@@ -164,7 +164,7 @@ TrafficLight/
 ```
 
 ### 组件概述
-1. **主控制器 (Arduino UNO)**
+1. **主控制器 (Arduino Mega 2560)**
    - 管理整体系统状态
    - 协调显示转换
    - 处理声音效果
@@ -178,7 +178,7 @@ TrafficLight/
 
 ### 设置说明
 1. **主控制器设置**
-   - 将 `Main_Update/Main_Update.ino` 上传至Arduino UNO
+   - 将 `Main_Update/Main_Update.ino` 上传至Arduino Mega 2560
    - 连接声音模块和其他外设
    - 验证串口通信
 
