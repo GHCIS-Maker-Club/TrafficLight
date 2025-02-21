@@ -19,10 +19,7 @@
 
 https://github.com/user-attachments/assets/27d9caf2-3c8c-475f-868e-3c1922e22fb2
 
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
 📹 演示视频 Demo video
       </td>
     </tr>
