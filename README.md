@@ -16,11 +16,11 @@
         <sub>成品 Finished product</sub>
       </td>
       <td align="center" width="33%">
-        <a href="pictures/IMG_5830.mp4">
-          <img src="pictures/IMG_5918.JPG" width="250px" alt="Click to watch demo video">
-          <br>
-          <sub>📹 点击观看演示视频 Click to watch demo video</sub>
-        </a>
+        <video width="250px" controls>
+          <source src="https://raw.githubusercontent.com/GHCIS-Maker-Club/TrafficLight/main/pictures/IMG_5830.mp4" type="video/mp4">
+        </video>
+        <br>
+        <sub>📹 演示视频 Demo video</sub>
       </td>
     </tr>
   </table>
