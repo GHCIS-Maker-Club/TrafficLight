@@ -3,22 +3,27 @@
 ## Picture and Video Gallery | 项目图片与视频
 
 <div align="center">
-  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1200px; margin: 0 auto;">
-    <div>
-      <img src="pictures/IMG_5871.JPG" width="100%" alt="Traffic Light Demo">
-      <p>搭建中 In construction</p>
-    </div>
-    <div>
-      <img src="pictures/IMG_5918.JPG" width="100%" alt="Traffic Light Setup">
-      <p>成品 Finished product</p>
-    </div>
-    <div>
-      <video width="100%" controls>
-        <source src="pictures/IMG_5830.mp4" type="video/mp4">
-      </video>
-      <p>演示视频 Demo video</p>
-    </div>
-  </div>
+  <table>
+    <tr>
+      <td align="center" width="33%">
+        <img src="pictures/IMG_5871.JPG" width="250px" alt="Traffic Light Demo">
+        <br>
+        <sub>搭建中 In construction</sub>
+      </td>
+      <td align="center" width="33%">
+        <img src="pictures/IMG_5918.JPG" width="250px" alt="Traffic Light Setup">
+        <br>
+        <sub>成品 Finished product</sub>
+      </td>
+      <td align="center" width="33%">
+        <a href="pictures/IMG_5830.mp4">
+          <img src="pictures/IMG_5918.JPG" width="250px" alt="Click to watch demo video">
+          <br>
+          <sub>📹 点击观看演示视频 Click to watch demo video</sub>
+        </a>
+      </td>
+    </tr>
+  </table>
 </div>
 
 🚦 An interactive art installation that reimagines the traditional traffic light | 重新想象传统红绿灯的互动艺术装置
