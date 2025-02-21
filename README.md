@@ -16,20 +16,9 @@
         <sub>成品 Finished product</sub>
       </td>
       <td align="center" width="33%">
-        <br>
-
-        <video width="250px" controls>
-
-
-
 
 https://github.com/user-attachments/assets/27d9caf2-3c8c-475f-868e-3c1922e22fb2
 
-
-
-
-
-        </video>
         <br>
         <sub>📹 演示视频 Demo video</sub>
       </td>
