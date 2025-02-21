@@ -20,7 +20,7 @@
 https://github.com/user-attachments/assets/27d9caf2-3c8c-475f-868e-3c1922e22fb2
 
 
-        <sub>📹 演示视频 Demo video</sub>
+📹 演示视频 Demo video
       </td>
     </tr>
   </table>
