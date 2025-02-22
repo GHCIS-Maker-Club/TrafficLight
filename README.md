@@ -45,7 +45,6 @@ This art installation explores the concept of freedom through the familiar yet t
 - 💡 16x16 LED Matrix Display for vibrant visuals
 - 🎮 Interactive control system
 - 🔄 Smooth transitions between different modes
-- 📱 Wireless control capabilities
 
 ### Technical Details
 - **Hardware Components:**
@@ -155,7 +154,6 @@ MIT License - feel free to use and modify for your own projects.
 - 💡 16x16 LED点阵屏幕展示
 - 🎮 交互式控制系统
 - 🔄 模式之间流畅切换
-- 📱 无线控制功能
 
 ### 技术细节
 - **硬件组件：**
