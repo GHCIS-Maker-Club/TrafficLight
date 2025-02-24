@@ -51,7 +51,6 @@ This art installation explores the concept of freedom through the familiar yet t
   - Main Controller: Arduino Mega 2560
   - Display Controllers: Multiple ESP32 modules
   - LED Matrix Display (16x16)
-  - Custom-designed enclosure
   - Sound module integration
   
 - **Software Features:**
@@ -160,7 +159,6 @@ MIT License - feel free to use and modify for your own projects.
   - 主控制器：Arduino Mega 2560
   - 显示控制器：多个ESP32模块
   - LED点阵显示屏 (16x16)
-  - 定制外壳设计
   - 声音模块集成
   
 - **软件特性：**
